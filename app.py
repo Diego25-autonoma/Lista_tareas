@@ -1,16 +1,17 @@
 from flask import Flask, render_template, request, redirect
 import pyodbc
+import os
 
 # Configuración de la aplicación Flask
 app = Flask(__name__)
 
-# Conexión a SQL Server
+# Conexión a SQL Server usando variables de entorno
 conexion = pyodbc.connect(
     "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=DESKTOP-TVTIM2S\\SQLEXPRESS;"
-    "DATABASE=ListaDeTareas;"
-    "UID=sa;"
-    "PWD=AMPUERO20#;"
+    f"SERVER={os.getenv('DB_SERVER')};"
+    f"DATABASE={os.getenv('DB_NAME')};"
+    f"UID={os.getenv('DB_USER')};"
+    f"PWD={os.getenv('DB_PASSWORD')};"
 )
 cursor = conexion.cursor()
 
@@ -24,13 +25,9 @@ def index():
 # Ruta para agregar una nueva tarea
 @app.route('/agregar', methods=['POST'])
 def agregar_tarea():
-    try:
-        descripcion = request.form['descripcion']
-        cursor.execute("INSERT INTO Tareas (descripcion, completado) VALUES (?, ?)", (descripcion, 0))
-        conexion.commit()
-        print("Tarea agregada correctamente")
-    except Exception as e:
-        print("Error al agregar tarea:", e)
+    descripcion = request.form['descripcion']
+    cursor.execute("INSERT INTO Tareas (descripcion, completado) VALUES (?, ?)", (descripcion, 0))
+    conexion.commit()
     return redirect('/')
 
 # Ruta para marcar una tarea como completada
@@ -40,18 +37,15 @@ def completar_tarea(tarea_id):
     conexion.commit()
     return redirect('/')
 
-#  Ruta para eliminar una tarea
+# Ruta para eliminar una tarea
 @app.route('/eliminar/<int:tarea_id>')
 def eliminar_tarea(tarea_id):
-    try:
-        cursor.execute("DELETE FROM Tareas WHERE id = ?", (tarea_id,))
-        conexion.commit()
-        print("Tarea eliminada correctamente")
-    except Exception as e:
-        print("Error al eliminar tarea:", e)
+    cursor.execute("DELETE FROM Tareas WHERE id = ?", (tarea_id,))
+    conexion.commit()
     return redirect('/')
 
 # Ejecutar el servidor
 if __name__ == '__main__':
     app.run(debug=True)
+
 
