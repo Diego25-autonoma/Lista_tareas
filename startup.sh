@@ -9,13 +9,14 @@ curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
 
 # Actualizar y aceptar el EULA de Microsoft
-apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql17 unixodbc-dev
+apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 unixodbc-dev
 
 # Verificar instalación
-if [ -f /opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.9.so.1.1 ]; then
-    echo "ODBC Driver instalado correctamente."
+if [ -f /opt/microsoft/msodbcsql18/lib64/libmsodbcsql-18.0.so.1.1 ]; then
+    echo "ODBC Driver 18 instalado correctamente."
 else
     echo "Error al instalar ODBC Driver."
     exit 1
 fi
+
 
