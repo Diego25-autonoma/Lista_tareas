@@ -1,2 +1,1 @@
 web: bash startup.sh && gunicorn app:app
-
